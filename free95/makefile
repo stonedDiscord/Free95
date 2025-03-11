@@ -22,22 +22,23 @@ endif
 
 SOURCES := $(wildcard $(SRC)/**.c)
 ASMSRC  := $(wildcard $(SRC)/**.s)
-ASMOBJ  := $(patsubst %.s,$(OBJ)/%.s.o,$(ASMSRC))
-COBJ    := $(patsubst %.c,$(OBJ)/%.c.o,$(SOURCES))
+ASMOBJ  := $(patsubst $(SRC)/%.s,$(OBJ)/%.s.o,$(ASMSRC))
+COBJ    := $(patsubst $(SRC)/%.c,$(OBJ)/%.c.o,$(SOURCES))
 CFLAGS= -m32 -std=gnu99 -ffreestanding -O2 -Wall -Wextra -fno-exceptions
 ASFLAGS=-felf32
 
 all: $(COBJ) $(ASMOBJ) link run
 
 link:
+	mkdir -p $(BIN)
 	ld $(LDFLAGS) -o $(BIN)/nxoskrnl.nef $(SOURCES)
 
-$(OBJ)/**.s.o: $(SRC)/**.s
-	mkdir -p $(dir $<)
+$(OBJ)/%.s.o: $(SRC)/**.s
+	mkdir -p $(dir $@)
 	nasm $(ASFLAGS) $< -o $@
 
-$(OBJ)/**.c.o: $(SRC)/**.C
-	mkdir -p $(dir $<)
+$(OBJ)/%.c.o: $(SRC)/**.c
+	mkdir -p $(dir $@)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 run:

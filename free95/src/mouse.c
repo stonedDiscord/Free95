@@ -46,20 +46,24 @@ void mouse_wait(bool type) {
         }
     }
 }
+extern void mouse_write(uint8_t data);
+extern uint8_t mouse_read();
 
-void mouse_write(uint8_t data) {
-    // sending write command
-    mouse_wait(true);
-    outb(PS2_CMD_PORT, 0xD4);
-    mouse_wait(true);
-    // finally write data to port
-    outb(MOUSE_DATA_PORT, data);
-}
 
-uint8_t mouse_read() {
-    mouse_wait(false);
-    return inb(MOUSE_DATA_PORT);
-}
+// this mouse read/write casued wack behavure in qemu
+// void mouse_write(uint8_t data) {
+//     // sending write command
+//     mouse_wait(true);
+//     outb(PS2_CMD_PORT, 0xD4);
+//     mouse_wait(true);
+//     // finally write data to port
+//     outb(MOUSE_DATA_PORT, data);
+// }
+
+// uint8_t mouse_read() {
+//     mouse_wait(false);
+//     return inb(MOUSE_DATA_PORT);
+// }
 
 void get_mouse_status(uint8_t status_byte, MOUSE_STATUS *status) {
     memset(status, 0, sizeof(MOUSE_STATUS));

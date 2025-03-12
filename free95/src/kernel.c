@@ -950,6 +950,9 @@ void mousedrv()
 #define MOUSE_COMMAND_PORT 0x64
 #define MOUSE_DATA_PORT    0x60
 
+// extern void mouse_write(uint8_t data); // mouse.c
+// extern uint8_t mouse_read(); // mouse.c
+
 void mouse_write(uint8_t data) {
     // Wait for the command port to be ready
     while ((inb(MOUSE_COMMAND_PORT) & 0x02) != 0);

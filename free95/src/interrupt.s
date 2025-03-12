@@ -29,7 +29,8 @@
     push byte %2
     jmp irq_common_stub
 %endmacro
-        
+
+ 
 ISR_NOERRCODE 0
 ISR_NOERRCODE 1
 ISR_NOERRCODE 2

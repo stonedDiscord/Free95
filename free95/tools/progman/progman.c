@@ -20,7 +20,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	int y = HIWORD(lParam);
 	POINT pt = {x, y};
 
-	RECT target = {20, 15, 48, 48};
+	const RECT target = {20, 15, 48, 48};
 
 	PAINTSTRUCT ps;
 	HDC hdc;
@@ -33,26 +33,31 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDOWN:
             if (PtInRect(&target, pt))
             {
-	            MessageBox(0, "Application was not found!", "Error", MB_OK);
+	            MessageBox(NULL, "Application was not found!", "Error", MB_OK | MB_ICONERROR);
             }
             return 0;
 		case WM_PAINT:
             hdc = BeginPaint(hwnd, &ps);
+            if (hdc == NULL)
+            {
+                break;
+            }
 
             SetTextColor(hdc, RGB(0, 0, 0));
             SetBkMode(hdc, TRANSPARENT);
             TextOut(hdc, 8, 58, "Winver", 6);
 
-	        RECT rect = {20, 15, 48, 48};
-	        
-	        // Create a solid brush with a specific color
-	        HBRUSH hBrush = CreateSolidBrush(RGB(0, 128, 255)); // Blue color
-	        
-	        // Fill the rectangle with the brush
-	        FillRect(hdc, &rect, hBrush);
-	        
-	        // Clean up by deleting the brush
-	        DeleteObject(hBrush);
+            const RECT rect = {20, 15, 48, 48};
+
+            // Create a solid brush with a specific color
+            HBRUSH hBrush = CreateSolidBrush(RGB(0, 128, 255)); // Blue color
+            if (hBrush)
+            {
+                // Fill the rectangle with the brush
+                FillRect(hdc, &rect, hBrush);
+                // Clean up by deleting the brush
+                DeleteObject(hBrush);
+            }
 
             EndPaint(hwnd, &ps);
 			return 0;
@@ -71,24 +76,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     wc.lpszClassName = CLASS_NAME;
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
-    RegisterClass(&wc);
+    if (!RegisterClass(&wc))
+    {
+        MessageBox(NULL, "Window Registration Failed!", "Error", MB_OK | MB_ICONERROR);
+        return 0;
+    }
     
     // Create the window.
     HWND hwnd = CreateWindowEx(
         0,                              // Optional window styles.
-        CLASS_NAME,                    // Window class name.
-        "Program Manager",          // Window title.
-        WS_OVERLAPPEDWINDOW,           // Window style.
+        CLASS_NAME,                     // Window class name.
+        "Program Manager",              // Window title.
+        WS_OVERLAPPEDWINDOW,            // Window style.
 
-        10, 10, 300, 300, // x, y, width, height
-        NULL,                          // Parent window.
-        NULL,                          // Menu.
-        hInstance,                     // Instance handle.
-        NULL                           // Additional application data.
+        10, 10, 300, 300,               // x, y, width, height
+        NULL,                           // Parent window.
+        NULL,                           // Menu.
+        hInstance,                      // Instance handle.
+        NULL                            // Additional application data.
     );
+
+    if (hwnd == NULL)
+    {
+        MessageBox(NULL, "Window Creation Failed!", "Error", MB_OK | MB_ICONERROR);
+        return 0;
+    }
 
     // Show the window.
     ShowWindow(hwnd, nCmdShow);
+    UpdateWindow(hwnd);
 
     // Run the message loop.
     MSG msg = {};
@@ -98,5 +114,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         DispatchMessage(&msg);
     }
 
-    return 0;
+    return (int) msg.wParam;
 }

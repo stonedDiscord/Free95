@@ -10,7 +10,7 @@ Free95 is an open-source windows-compatible operating system.
 ![image](https://github.com/user-attachments/assets/c9606200-906d-4e98-978c-3bd23251f53e)
 
 # What?
-Free95 is your friendly Windows Environment with an added trust of the open source community, all your favorite games, applications and such from Windows will run perfectly fine on Free95 aswell!
+Free95 is your friendly Windows Environment with an added trust of the open source community, all your favorite games, applications and such from Windows will run perfectly fine on Free95 aswell! It is **NOT** a recreation of the NT Kernel, it simply supports apps using the Win32 API (like .exe files)
 
 # Why?
 To remove Windows's bloat, and security problems. Being controlled by a large corporation is unsettling.
